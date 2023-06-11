@@ -10,16 +10,17 @@
 #   https://dev.mysql.com/doc/refman/5.7/en/password-hashing.html
 #
 default: &default
-  adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password:
-  socket: /tmp/mysql.sock
+  
 
 development:
   <<: *default
   database: protospace_39447_development
+  adapter: mysql2
+  username: root
+  password:
+  host: localhost
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -27,7 +28,10 @@ development:
 test:
   <<: *default
   database: protospace_39447_test
-
+  adapter: mysql2
+  username: root
+  password:
+  host: localhost
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
@@ -52,3 +56,5 @@ production:
   database: protospace_39447_production
   username: protospace_39447
   password: <%= ENV['PROTOSPACE_39447_DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  url: <%= ENV['DATABASE_URL'] %>
