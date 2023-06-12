@@ -1,4 +1,7 @@
 class PrototypesController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show, :new, :create,]
+  before_action :set_prototype, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_user!, only: [:edit, :update, :destroy]
   
   def index
     @prototypes = Prototype.all
@@ -8,6 +11,11 @@ class PrototypesController < ApplicationController
     @prototype = Prototype.find(params[:id])
     @comment = Comment.new
     @comments = @prototype.comments.includes(:user)
+
+    if !user_signed_in? && @prototype.user == current_user
+      @user = @prototype.user
+      render 'user_show'
+    end
   end
 
   def new
@@ -47,9 +55,17 @@ class PrototypesController < ApplicationController
     redirect_to root_path, notice: "投稿が削除されました"
   end
 
+  def user_show
+    @user = User.find(params[:id])
+  end
+
   private
 
   def prototype_params
     params.require(:prototype).permit(:title, :catch_copy, :concept, :image).merge(user_id: current_user.id)
+  end
+
+  def set_prototype
+    @prototype = Prototype.find(params[:id])
   end
 end
