@@ -1,6 +1,8 @@
 class PrototypesController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :new, :create, :user_show]
+  before_action :authenticate_user!, except: [:index, :show, :user_show]
   before_action :set_prototype, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_user!, only: [:edit, :update, :destroy]
+  before_action :redirect_unauthenticated_user, only: [:new, :create, :edit, :update]
 
 
   def index
@@ -67,5 +69,17 @@ class PrototypesController < ApplicationController
 
   def set_prototype
     @prototype = Prototype.find(params[:id])
+  end
+
+  def redirect_unauthenticated_user
+    unless user_signed_in?
+      redirect_to new_user_session_path
+    end
+  end
+
+  def authorize_user!
+    unless current_user == @prototype.user
+      redirect_to root_path, alert: "権限がありません"
+    end
   end
 end
