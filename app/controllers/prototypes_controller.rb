@@ -1,8 +1,8 @@
 class PrototypesController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show, :new, :create,]
+  before_action :authenticate_user!, except: [:index, :show, :new, :create, :user_show]
   before_action :set_prototype, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_user!, only: [:edit, :update, :destroy]
-  
+
+
   def index
     @prototypes = Prototype.all
   end
@@ -14,7 +14,7 @@ class PrototypesController < ApplicationController
 
     if !user_signed_in? && @prototype.user == current_user
       @user = @prototype.user
-      render 'user_show'
+      render "user_show"
     end
   end
 
